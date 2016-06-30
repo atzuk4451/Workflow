@@ -25,16 +25,13 @@
             },
             labels: [
 
-                { position: 0.37, attrs: { text: {id:'actiontext', text: 'A', fill: 'black', 'font-family': 'sans-serif' },
+                { position: 0.37, attrs: { text: {id:'actiontext', text: 'A', fill: 'black', 'font-family': 'sans-serif' }, //Action label
                     rect: {id:'actionrect',fill: '#CEC7FE', stroke: '#CEC7FE', 'stroke-width': 20, rx: 20, ry: 20 }
-
                 }},
-
-                { position: 0.63, attrs: { text: {id:'guardtext', text: 'G', fill: 'black', 'font-family': 'sans-serif' },
+                { position: 0.63, attrs: { text: {id:'guardtext', text: 'G', fill: 'black', 'font-family': 'sans-serif' },//Guard label
                     rect: {id:'guardrect',fill: '#EFCBF5', stroke: '#EFCBF5', 'stroke-width': 20, rx: 20, ry: 20, } }},
                 { position: 0.45, attrs: { text: {class:'hide', text: 'Action text', fill: 'black', 'font-family': 'sans-serif',transform:'translate(-75,-50)' },
                     rect: {class:'hide',fill: '#CEC7FE', stroke: '#CEC7FE', 'stroke-width': 20,transform:'translate(-75,-50)', rx: 1, ry: 1  }
-
                 }},
                 { position: 0.55, attrs: { text: {class:'hide', text: 'Guard text', fill: 'black', 'font-family': 'sans-serif',transform:'translate(75,50)' },
                     rect: {class:'hide',fill: '#EFCBF5', stroke: '#EFCBF5', 'stroke-width': 20,transform:'translate(75,50)',width:'200',height:'70', rx: 1, ry: 1  }
@@ -46,7 +43,7 @@
 
     });
 
-    r1 = new joint.shapes.basic.Rect({
+    r1 = new joint.shapes.basic.Rect({ //Creating basic node
 
         position: { x: 20, y: 20 },
         size: { width: 150, height: 150 },
@@ -57,7 +54,7 @@
                  text: { text: 'Parent'  }}
 
     });
-    r2 = new joint.shapes.basic.DecoratedRect({
+    r2 = new joint.shapes.basic.DecoratedRect({ //Creating resize handler
         position: { x: 160, y: 160 },
 
         attrs: { rect: { id: 'handler' },
@@ -73,7 +70,7 @@
 
 
 
-    graph.on('change:size', function(cell, newPosition, opt) {
+    graph.on('change:size', function(cell, newPosition, opt) { //Allowing node to resize by another one embeded in
 
         if (opt.skipParentHandler) return;
 
@@ -141,7 +138,7 @@
 
 
 
-    paper.on('blank:pointerdblclick', //paper doubleclick starts function
+    paper.on('blank:pointerdblclick', //Creating new node on paper by doubleclicking
         function(event) {
             r3 = r1.clone(); // creating parent object clone
             r4 = r2.clone();//creating resize handler clone
@@ -156,7 +153,7 @@
 
 
 
-    function setGrid(paper, gridSize, color) {
+    function setGrid(paper, gridSize, color) { //Drawing grid on the paper
         // Set grid size on the JointJS paper object (joint.dia.Paper instance)
         paper.options.gridSize = gridSize;
         // Draw a grid into the HTML 5 canvas and convert it to a data URI image
@@ -180,7 +177,7 @@
 
 }());
 
-function save() {
+function save() { //Saving file
     bootbox.prompt({
         title: "Enter save file name",
         value: "savedata",
@@ -205,7 +202,7 @@ function save() {
 
 
 
-function loadFile() {
+function loadFile() { //Loading file
     var input, file, fr;
 
     if (typeof window.FileReader !== 'function') {
@@ -239,7 +236,7 @@ function loadFile() {
 
 
 }
-function addNodes(){
+function addNodes(){ //adding new nodes to paper
 
     bootbox.prompt("Enter node text. Separate with comma", function(res) {
         if (res === null) {
@@ -265,7 +262,7 @@ function addNodes(){
 }
 var selected = null;
 
-paper.on('cell:pointerclick', function(cellView) {
+paper.on('cell:pointerclick', function(cellView) {  //node or link selection
 
     if(selected != null){
         if(selected.isLink()){
@@ -289,29 +286,30 @@ paper.on('cell:pointerclick', function(cellView) {
 
 
 });
-paper.on('blank:pointerclick', function() {
+paper.on('blank:pointerclick', function() { //resets selected node or link by clicking on blank area
     if(selected != null) {
         if (selected.isLink()){
+            selected = null;
 
-            return;
         }else {
             selected.attr('rect/id', 'baserect');
+            selected = null;
         }
     }
-    selected = null;
+
 });
-function deleteNode(){
+function deleteNode(){//delete selected Node (or link)
 
     if (selected) selected.remove();
 
 }
-function addGuard() {
-    if(selected == null){
+function editGuard() {
+    if(selected == null){//checking if anything is selected
         bootbox.alert("Choose link by clicking before editing")
-    }else if(selected.isLink() == false){
+    }else if(selected.isLink() == false){//checking if link is selected
         bootbox.alert("You can't add guards to nodes")
     }else {
-        bootbox.dialog({                        //js alert with bootstrap library
+        bootbox.dialog({                         //bootbox.dialog with inner HTML list
             title: "Choose Guard sample",
             message: '<select id="Ultra" >' +
             '<option >Delete Guard</option>' +
@@ -326,9 +324,9 @@ function addGuard() {
                 success: {
                     label: "Ok",
                     className: "btn-primary",
-                    callback: function () {
+                    callback: function () {//callback function
                         var name = $('#Ultra').val();
-                        if (name == "Delete Guard") {
+                        if (name == "Delete Guard") {//deleting existing Guard
                             selected.label(1, {attrs: {text: {id: 'guardtext'}, rect: {id: 'guardrect'}}});
                             selected.label(3, {attrs: {text: {class: 'hide'}, rect: {class: 'hide'}}});
 
@@ -355,13 +353,13 @@ function addGuard() {
     }
 
 }
-function addAction() {
-    if(selected == null){
+function editAction() { //link Action editing function
+    if(selected == null){ //checking if anything is selected
         bootbox.alert("Choose link by clicking before editing")
-    }else if(selected.isLink() == false){
+    }else if(selected.isLink() == false){ //checking if link is selected
         bootbox.alert("You can't add actions to nodes")
     }else {
-        bootbox.dialog({                        //js alert with bootstrap library
+        bootbox.dialog({                        //bootbox.dialog with inner HTML list
             title: "Choose Action sample",
             message: '<select id="Ultra" >' +
             '<option >Delete Action</option>' +
@@ -376,9 +374,9 @@ function addAction() {
                 success: {
                     label: "Ok",
                     className: "btn-primary",
-                    callback: function () {
+                    callback: function () { //callback function
                         var name = $('#Ultra').val();
-                        if (name == "Delete Action") {
+                        if (name == "Delete Action") {//deleting existing Action
                             selected.label(0, {attrs: {text: {id: 'actiontext'}, rect: {id: 'actionrect'}}});
                             selected.label(2, {attrs: {text: {class: 'hide'}, rect: {class: 'hide'}}});
 
@@ -404,15 +402,15 @@ function addAction() {
         });
     }
 }
-function editText(){
-    if(selected != null){
+function editText(){ //edit text inside node
+    if(selected != null){ //checking if any node selected
 
-        bootbox.prompt({                        //js alert with bootstrap library
+        bootbox.prompt({                        //bootbox.promt
             title: "Enter new text",
             value: selected.attr('text/text'),
             callback: function(result) {
                 if (result != null) {
-                    selected.attr('text/text', result);
+                    selected.attr('text/text', result); //adding new text to node
                 }
             }
         });
