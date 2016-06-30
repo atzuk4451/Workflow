@@ -16,10 +16,10 @@
     });
 
     graph = new joint.dia.Graph;
-    paper = new joint.dia.Paper({ el: $('#paper-parent-expand'), width: 1680, height: 1050, gridSize: 15, model: graph,
+    paper = new joint.dia.Paper({ el: $('#paper-parent-expand'), width: window.screen.availWidth, height: window.screen.availHeight, gridSize: 15, model: graph,
         defaultLink: new joint.dia.Link({
             attrs: {
-                '.connection': { id: 'arrow' },
+                '.connection': { id: 'arrow'},
 
                 '.marker-target': { id: "arrow_endpoint", d: 'M 10 0 L 0 5 L 10 10 z' }
             },
@@ -33,11 +33,11 @@
                 { position: 0.63, attrs: { text: {id:'guardtext', text: 'G', fill: 'black', 'font-family': 'sans-serif' },
                     rect: {id:'guardrect',fill: '#EFCBF5', stroke: '#EFCBF5', 'stroke-width': 20, rx: 20, ry: 20, } }},
                 { position: 0.45, attrs: { text: {class:'hide', text: 'Action text', fill: 'black', 'font-family': 'sans-serif',transform:'translate(-75,-50)' },
-                    rect: {class:'hide',fill: '#CEC7FE', stroke: '#CEC7FE', 'stroke-width': 20,transform:'translate(-75,-50)'  }
+                    rect: {class:'hide',fill: '#CEC7FE', stroke: '#CEC7FE', 'stroke-width': 20,transform:'translate(-75,-50)', rx: 1, ry: 1  }
 
                 }},
                 { position: 0.55, attrs: { text: {class:'hide', text: 'Guard text', fill: 'black', 'font-family': 'sans-serif',transform:'translate(75,50)' },
-                    rect: {class:'hide',fill: '#EFCBF5', stroke: '#EFCBF5', 'stroke-width': 20,transform:'translate(75,50)',width:'200',height:'70'  }
+                    rect: {class:'hide',fill: '#EFCBF5', stroke: '#EFCBF5', 'stroke-width': 20,transform:'translate(75,50)',width:'200',height:'70', rx: 1, ry: 1  }
 
                 }}
 
@@ -306,14 +306,103 @@ function deleteNode(){
 
 }
 function addGuard() {
-    selected.label(1, {attrs: {text: {id: 'guardtextvisible'}, rect: {id: 'guardrectvisible'}}});
-    selected.label(3, {attrs: {text: {class:'guardtexthide'}, rect: {class:'guardrecthide'} }});
+    if(selected == null){
+        bootbox.alert("Choose link by clicking before editing")
+    }else if(selected.isLink() == false){
+        bootbox.alert("You can't add guards to nodes")
+    }else {
+        bootbox.dialog({                        //js alert with bootstrap library
+            title: "Choose Guard sample",
+            message: '<select id="Ultra" >' +
+            '<option >Delete Guard</option>' +
+            '<option >Guard1</option>' +
+            '<option >Guard2</option>' +
+            '<option >Guard3</option>' +
+            '<option >Guard4</option>' +
+            '<option >Guard5</option>' +
+            '<option >Guard6</option>' +
+            '</select>',
+            buttons: {
+                success: {
+                    label: "Ok",
+                    className: "btn-primary",
+                    callback: function () {
+                        var name = $('#Ultra').val();
+                        if (name == "Delete Guard") {
+                            selected.label(1, {attrs: {text: {id: 'guardtext'}, rect: {id: 'guardrect'}}});
+                            selected.label(3, {attrs: {text: {class: 'hide'}, rect: {class: 'hide'}}});
+
+                        } else {
+                            selected.label(1, {
+                                attrs: {
+                                    text: {id: 'guardtextvisible'},
+                                    rect: {id: 'guardrectvisible'}
+                                }
+                            });
+                            selected.label(3, {
+                                attrs: {
+                                    text: {class: 'guardtexthide', text: name},
+                                    rect: {class: 'guardrecthide'}
+                                }
+                            });
+
+                        }
+
+                    }
+                }
+            }
+        });
+    }
 
 }
 function addAction() {
-    selected.label(0, {attrs: {text: {id: 'actiontextvisible'}, rect: {id: 'actionrectvisible'}}});
-    selected.label(2, {attrs: {text: {class:'actiontexthide'}, rect: {class:'actionrecthide'}}});
+    if(selected == null){
+        bootbox.alert("Choose link by clicking before editing")
+    }else if(selected.isLink() == false){
+        bootbox.alert("You can't add actions to nodes")
+    }else {
+        bootbox.dialog({                        //js alert with bootstrap library
+            title: "Choose Action sample",
+            message: '<select id="Ultra" >' +
+            '<option >Delete Action</option>' +
+            '<option >Action1</option>' +
+            '<option >Action2</option>' +
+            '<option >Action3</option>' +
+            '<option >Action4</option>' +
+            '<option >Action5</option>' +
+            '<option >Action6</option>' +
+            '</select>',
+            buttons: {
+                success: {
+                    label: "Ok",
+                    className: "btn-primary",
+                    callback: function () {
+                        var name = $('#Ultra').val();
+                        if (name == "Delete Action") {
+                            selected.label(0, {attrs: {text: {id: 'actiontext'}, rect: {id: 'actionrect'}}});
+                            selected.label(2, {attrs: {text: {class: 'hide'}, rect: {class: 'hide'}}});
 
+                        } else {
+                            selected.label(0, {
+                                attrs: {
+                                    text: {id: 'actiontextvisible'},
+                                    rect: {id: 'actionrectvisible'}
+                                }
+                            });
+                            selected.label(2, {
+                                attrs: {
+                                    text: {class: 'actiontexthide', text: name},
+                                    rect: {class: 'actionrecthide'}
+                                }
+                            });
+
+                        }
+
+                    }
+                }
+            }
+        });
+    }
 }
 function editText(){
     if(selected != null){
