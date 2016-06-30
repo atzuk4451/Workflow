@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flow</title>
+
+
+    <link rel="stylesheet" type="text/css"
+          href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/base/jquery-ui.css"/>
+    <link rel="stylesheet" href="css/joint.css" />
+    <script src="libs/jquery.min.js"></script>
+    <script src="libs/lodash.min.js"> </script>
+    <script src="libs/backbone-min.js" > </script>
+    <script src="libs/joint.min.js"></script>
+    <script src="libs/bootbox.min.js"></script>
+    <script src="libs/bootstrap.min.js"></script>
+    <script src="libs/FileSaver.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/nodesstyling.css" />
+</head>
+<body>
+<div class="file_upload">
+    <button id="btnChoose" type="button">Choose file</button>
+    <div>No file chosen</div>
+    <input id="fileinput" type="file">
+</div>
+<form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post">
+
+
+    <fieldset>
+
+
+        <input type='button' id='btnSave' value='Save diagram' onclick='save();'>
+        <input type='button' id='btnLoad' value='Load diagram' onclick='loadFile();'>
+        <input type='button' id='btnAddNodes' value='Add new Nodes' onclick='addNodes();'>
+        <input type='button' id='btnDeleteselectedNode' value='Delete Node' onclick='deleteNode();'>
+        <input type='button' id='btnEdit' value='Edit' onclick='editText();'>
+        <input type='button' id='btnAddGuard' value='Add Guard' onclick='addGuard();'>
+        <input type='button' id='btnAddAction' value='Add Action' onclick='addAction();'>
+    </fieldset>
+</form>
+
+
+
+<div id = "paper-parent-expand"></div>
+
+
+<script src="main.js"></script>
+
+</body>
+</html>
