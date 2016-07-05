@@ -6,7 +6,7 @@
         markup: '<g class="rotatable"><g class="scalable"><rect/></g><image/><text/></g>',
 
         defaults: joint.util.deepSupplement({
-            type: 'basic.Rect',
+            type: 'basic.DecoratedRect',
             attrs: {
                 'rect': { 'follow-scale': true, width: 80, height: 40 },
 
@@ -16,7 +16,7 @@
     });
 
     graph = new joint.dia.Graph;
-    paper = new joint.dia.Paper({ el: $('#paper-parent-expand'), width: window.screen.availWidth, height: window.screen.availHeight, gridSize: 15, model: graph,
+    paper = new joint.dia.Paper({ el: $('#paper-parent-expand'), width: window.screen.availWidth, height: window.screen.availHeight, gridSize: 15,linkPinning: false, model: graph,
         defaultLink: new joint.dia.Link({
             attrs: {
                 '.connection': { id: 'arrow'},
@@ -35,30 +35,38 @@
                 }},
                 { position: 0.55, attrs: { text: {class:'hide', text: 'Guard text', fill: 'black', 'font-family': 'sans-serif',transform:'translate(75,50)' },
                     rect: {class:'hide',fill: '#EFCBF5', stroke: '#EFCBF5', 'stroke-width': 20,transform:'translate(75,50)',width:'200',height:'70', rx: 1, ry: 1  }
-
+                }},
+                { position: 1, attrs: { text: {class:'hide', text: '  ', fill: 'red', 'font-family': 'sans-serif' },
+                    rect: {class:'hide',fill: 'red', stroke: 'red', 'stroke-width': 9, rx: 300, ry: 300  }
                 }}
 
             ]
         })
 
     });
-
+    var connect = function(source, sourcePort, target, targetPort) {
+        var link = new joint.shapes.devs.Link({
+            source: { id: source.id, selector: source.getPortSelector(sourcePort) },
+            target: { id: target.id, selector: target.getPortSelector(targetPort) }
+        });
+        link.addTo(graph).reparent();
+    };
     r1 = new joint.shapes.basic.Rect({ //Creating basic node
 
         position: { x: 20, y: 20 },
-        size: { width: 150, height: 150 },
-        attrs: { rect: {magnet: 'true',
+        size: { width: 105, height: 50 },
+        attrs: { rect: {magnet:true,
                         id: 'baserect',
                         rx: 5,
                         ry: 5  },
-                 text: { text: 'Parent'  }}
+                 text: {text: 'Parent' }}
 
     });
     r2 = new joint.shapes.basic.DecoratedRect({ //Creating resize handler
         position: { x: 160, y: 160 },
 
         attrs: { rect: { id: 'handler' },
-                 image:{ 'xlink:href': 'resize-handle.png' }
+                 image:{ 'link:href': 'resize-handle.png' }
 
 
         }
@@ -66,7 +74,6 @@
 
 
     r1.embed(r2);
-
 
 
 
@@ -109,8 +116,8 @@
 
         var newX = originalPosition.x;
         var newY = originalPosition.y;
-        var newCornerX = originalPosition.x + originalSize.width  ;
-        var newCornerY = originalPosition.y + originalSize.height ;
+        var newCornerX = originalPosition.x + originalSize.width;
+        var newCornerY = originalPosition.y + originalSize.height;
 
         _.each(parent.getEmbeddedCells(), function(child) {
 
@@ -118,11 +125,13 @@
 
             if (childBbox.x < newX) { newX = childBbox.x; }
             if (childBbox.y < newY) { newY = childBbox.y; }
-            if (childBbox.corner().x > newCornerX ) { newCornerX = childBbox.corner().x + 20; }
-            if (childBbox.corner().y > newCornerY ) { newCornerY = childBbox.corner().y + 19; }
-            if (childBbox.corner().x < newCornerX ) { newCornerX = childBbox.corner().x + 20; }
-            if (childBbox.corner().y < newCornerY ) { newCornerY = childBbox.corner().y + 19; }
+            if (childBbox.corner().x > newCornerX ) { newCornerX = childBbox.corner().x + 15; }
+            if (childBbox.corner().y > newCornerY ) { newCornerY = childBbox.corner().y + 15; }
 
+            if (childBbox.corner().x < newCornerX ) { newCornerX = childBbox.corner().x + 15; }
+            if (childBbox.corner().y < newCornerY ) { newCornerY = childBbox.corner().y + 15; }
+
+            console.log(childBbox.corner().x < newCornerX)
         });
 
         // Note that we also pass a flag so that we know we shouldn't adjust the
@@ -130,7 +139,7 @@
         // on the following `set()` call.
         parent.set({
             position: { x: newX, y: newY },
-            size: { width: newCornerX - newX, height: newCornerY - newY }
+            size: { width: newCornerX - newX , height: newCornerY - newY }
         }, { skipParentHandler: true });
 
     });
@@ -143,7 +152,7 @@
             r3 = r1.clone(); // creating parent object clone
             r4 = r2.clone();//creating resize handler clone
             r3.position(event.clientX, event.clientY); //positioning parent object by mouse coords
-            r4.position(event.clientX + 133, event.clientY + 135);//positioning handler
+            r4.position(event.clientX + 88, event.clientY + 35);//positioning handler
             r3.embed(r4); //grouping parent and handler objects
             graph.addCells([r3,r4]); //adding parent and handler
 
@@ -226,6 +235,7 @@ function loadFile() { //Loading file
         fr = new FileReader();
         fr.onload = receivedText;
         fr.readAsText(file);
+
         function receivedText(e) {
             lines = e.target.result;
             var newArr = JSON.parse(lines);
@@ -249,7 +259,7 @@ function addNodes(){ //adding new nodes to paper
                 r3 = r1.clone(); // creating parent object clone
                 r4 = r2.clone();//creating resize handler clone
                 r3.position(150 + i*150, 150); //positioning parent object by mouse coords
-                r4.position(150 + 133 + i*150, 150 + 135 );//positioning handler
+                r4.position(150 + 88 + i*150, 150 + 35 );//positioning handler
                 r3.embed(r4); //grouping parent and handler objects
                 r3.attr('text/text', nodearray[i])
                 graph.addCells([r3, r4]); //adding parent and handler
@@ -265,32 +275,87 @@ var selected = null;
 paper.on('cell:pointerclick', function(cellView) {  //node or link selection
 
     if(selected != null){
-        if(selected.isLink()){
-            selected = cellView.model;
+        if(cellView.model.isLink()){
+            if(selected.isLink()){
+                selected.label(4, {
+                    attrs: {
+                        text: {class: 'hide'},
+                        rect: {class: 'hide'}
+                    }
+                });
+                selected = cellView.model;
+                selected.label(4, {
+                    attrs: {
+                        text: {class: 'show'},
+                        rect: {class: 'show'}
+                    }
+                });
+            }else{
+                selected.attr('rect/id', 'baserect');
+                selected = cellView.model;
+                selected.label(4, {
+                    attrs: {
+                        text: {class: 'show'},
+                        rect: {class: 'show'}
+                    }
+                });
+            }
 
-        }else {
-            selected.attr('rect/id', 'baserect');
-            selected = cellView.model;
-            selected.attr('rect/id', 'select')
+        }
+        else {
+            if(selected.isLink()) {
+                selected.label(4, {
+                    attrs: {
+                        text: {class: 'hide'},
+                        rect: {class: 'hide'}
+                    }
+                });
+                selected = cellView.model;
+                selected.attr('rect/id', 'select')
+            }else {
+
+
+                selected.attr('rect/id', 'baserect');
+
+                selected = cellView.model;
+                selected.attr('rect/id', 'select')
+            }
         }
     }
 
 
     else {
-
-
+        if(cellView.model.isLink()) {
+            selected = cellView.model;
+            selected.label(4, {
+                attrs: {
+                    text: {class: 'show'},
+                    rect: {class: 'show'}
+                }
+            });
+        }else {
             selected = cellView.model;
             selected.attr('rect/id', 'select')
+        }
         }
 
 
 
 });
+
+
+
+
 paper.on('blank:pointerclick', function() { //resets selected node or link by clicking on blank area
     if(selected != null) {
         if (selected.isLink()){
+            selected.label(4, {
+                attrs: {
+                    text: {class: 'hide'},
+                    rect: {class: 'hide'}
+                }
+            });
             selected = null;
-
         }else {
             selected.attr('rect/id', 'baserect');
             selected = null;
@@ -404,17 +469,18 @@ function editAction() { //link Action editing function
 }
 function editText(){ //edit text inside node
     if(selected != null){ //checking if any node selected
-
-        bootbox.prompt({                        //bootbox.promt
-            title: "Enter new text",
-            value: selected.attr('text/text'),
-            callback: function(result) {
-                if (result != null) {
-                    selected.attr('text/text', result); //adding new text to node
-                }
+      if(selected.isLink()){
+          bootbox.alert("You can't edit link text")
+      }else {
+          bootbox.prompt({                        //bootbox.promt
+              title: "Enter new text",
+              value: selected.attr('text/text'),
+              callback: function (result) {
+                  if (result != null) {
+                      selected.attr('text/text', result); //adding new text to node
+                  }
+              }
+          });
             }
-        });
-
-
     }
 }

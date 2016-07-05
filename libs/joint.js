@@ -6438,8 +6438,6 @@ joint.dia.Link = joint.dia.Cell.extend({
 
     // The default markup for links.
     markup: [
-
-
         '<path class="connection" stroke="black" d="M 0 0 0 0"/>',
         '<path class="marker-source" fill="black" stroke="black" d="M 0 0 0 0"/>',
         '<path class="marker-target" fill="black" stroke="black" d="M 0 0 0 0"/>',
@@ -6447,10 +6445,7 @@ joint.dia.Link = joint.dia.Cell.extend({
         '<g class="labels"/>',
         '<g class="marker-vertices"/>',
         '<g class="marker-arrowheads"/>',
-        '<g class="link-tools"/>',
-
-
-
+        '<g class="link-tools"/>'
     ].join(''),
 
     labelMarkup: [
@@ -6481,25 +6476,10 @@ joint.dia.Link = joint.dia.Cell.extend({
     vertexMarkup: [
         '<g class="marker-vertex-group" transform="translate(<%= x %>, <%= y %>)">',
         '<circle class="marker-vertex" idx="<%= idx %>" r="10" />',
-
         '<path class="marker-vertex-remove-area" idx="<%= idx %>" d="M16,5.333c-7.732,0-14,4.701-14,10.5c0,1.982,0.741,3.833,2.016,5.414L2,25.667l5.613-1.441c2.339,1.317,5.237,2.107,8.387,2.107c7.732,0,14-4.701,14-10.5C30,10.034,23.732,5.333,16,5.333z" transform="translate(5, -33)"/>',
         '<path class="marker-vertex-remove" idx="<%= idx %>" transform="scale(.8) translate(9.5, -37)" d="M24.778,21.419 19.276,15.917 24.777,10.415 21.949,7.585 16.447,13.087 10.945,7.585 8.117,10.415 13.618,15.917 8.116,21.419 10.946,24.248 16.447,18.746 21.948,24.248z">',
-        '<title>Remove.</title>',
-
+        '<title>Remove vertex.</title>',
         '</path>',
-
-        '</g>'
-    ].join(''),
-    guardMarkup: [
-        '<g class="marker-guard-group" transform="translate(<%= x %>, <%= y %>)">',
-        '<circle class="marker-guard" idx="<%= idx %>" r="10" />',
-        '<text>Privet druzya</text>',
-        '<path class="marker-guard-remove-area" idx="<%= idx %>" d="M16,5.333c-7.732,0-14,4.701-14,10.5c0,1.982,0.741,3.833,2.016,5.414L2,25.667l5.613-1.441c2.339,1.317,5.237,2.107,8.387,2.107c7.732,0,14-4.701,14-10.5C30,10.034,23.732,5.333,16,5.333z" transform="translate(5, -33)"/>',
-        '<path class="marker-guard-remove" idx="<%= idx %>" transform="scale(.8) translate(9.5, -37)" d="M24.778,21.419 19.276,15.917 24.777,10.415 21.949,7.585 16.447,13.087 10.945,7.585 8.117,10.415 13.618,15.917 8.116,21.419 10.946,24.248 16.447,18.746 21.948,24.248z">',
-        '<title>Remove.</title>',
-
-        '</path>',
-
         '</g>'
     ].join(''),
 
@@ -6507,7 +6487,6 @@ joint.dia.Link = joint.dia.Cell.extend({
         '<g class="marker-arrowhead-group marker-arrowhead-group-<%= end %>">',
         '<path class="marker-arrowhead" end="<%= end %>" d="M 26 0 L 0 13 L 26 26 z" />',
         '</g>'
-
     ].join(''),
 
     defaults: {
@@ -6866,7 +6845,6 @@ joint.dia.LinkView = joint.dia.CellView.extend({
 
             var $text = $(labelNode).find('text');
             var $rect = $(labelNode).find('rect');
-            var $circle = $(labelNode).find('circle');
 
             // Text attributes with the default `text-anchor` and font-size set.
             var textAttributes = _.extend({ 'text-anchor': 'middle', 'font-size': 14 }, joint.util.getByPath(label, 'attrs/text', '/'));
@@ -6896,20 +6874,6 @@ joint.dia.LinkView = joint.dia.CellView.extend({
             }, joint.util.getByPath(label, 'attrs/rect', '/'));
 
             $rect.attr(_.extend(rectAttributes, {
-                x: textBbox.x,
-                y: textBbox.y - textBbox.height / 2,  // Take into account the y-alignment translation.
-                width: textBbox.width,
-                height: textBbox.height
-            }));
-            var circleAttributes = _.extend({
-
-                fill: 'white',
-                rx: 3,
-                ry: 3
-
-            }, joint.util.getByPath(label, 'attrs/circle', '/'));
-
-            $circle.attr(_.extend(circleAttributes, {
                 x: textBbox.x,
                 y: textBbox.y - textBbox.height / 2,  // Take into account the y-alignment translation.
                 width: textBbox.width,
@@ -6976,24 +6940,7 @@ joint.dia.LinkView = joint.dia.CellView.extend({
 
         return this;
     },
-    renderGuardMarkers: function() {
 
-        if (!this._V.markerGuards) return this;
-
-        var $markerGuards = $(this._V.markerGuards.node).empty();
-
-        // A special markup can be given in the `properties.vertexMarkup` property. This might be handy
-        // if default styling (elements) are not desired. This makes it possible to use any
-        // SVG elements for .marker-vertex and .marker-vertex-remove tools.
-        var markupTemplate = _.template(this.model.get('guardMarkup') || this.model.guardMarkup);
-
-        _.each(this.model.get('guards'), function(guard, idx) {
-
-            $markerGuard.append(V(markupTemplate(_.extend({ idx: idx }, guard))).node);
-        });
-
-        return this;
-    },
     renderArrowheadMarkers: function() {
 
         // Custom markups might not have arrowhead markers. Therefore, jump of this function immediately if that's the case.
@@ -7563,20 +7510,6 @@ joint.dia.LinkView = joint.dia.CellView.extend({
 
         return idx;
     },
-    removeGuard: function(idx) {
-
-        var guards = _.clone(this.model.get('guards'));
-
-        if (guards && guards.length) {
-
-            guards.splice(idx, 1);
-            this.model.set('guards', guards, { ui: true });
-        }
-
-        return this;
-    },
-
-
 
     // Send a token (an SVG element, usually a circle) along the connection path.
     // Example: `paper.findViewByModel(link).sendToken(V('circle', { r: 7, fill: 'green' }).node)`
@@ -7993,17 +7926,7 @@ joint.dia.LinkView = joint.dia.CellView.extend({
                 }
         }
     },
-    contextmenu: function(evt, x, y){
-        if (this.can('guardxAdd')) {
 
-            // Store the index at which the new vertex has just been placed.
-            // We'll be update the very same vertex position in `pointermove()`.
-            this._guardIdx = this.addGuard({ x: x, y: y });
-            this._action = 'guard-move';
-        }
-
-
-    },
     pointermove: function(evt, x, y) {
 
         switch (this._action) {
@@ -9263,7 +9186,7 @@ joint.shapes.basic.Generic = joint.dia.Element.extend({
 
 joint.shapes.basic.Rect = joint.shapes.basic.Generic.extend({
 
-    markup: '<g class="rotatable"><g class="scalable"><rect/></g><text/></g>',
+    markup: '<g class="rotatable"><g class="scalable"><rect/></g><text/><image/></g>',
 
     defaults: joint.util.deepSupplement({
 

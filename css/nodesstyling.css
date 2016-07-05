@@ -27,15 +27,10 @@
 
 #arrow{
     stroke: black;
-    stroke-width: 3px;
+    stroke-width: 4px;
 
 
 /* arrow body*/ }
-#arrowselected{
-
-    stroke:red;
-    stroke-width: 3px;
-}
 
 
 #arrowendpoint {
@@ -153,7 +148,7 @@
     overflow: hidden;
         /* example */
     height: 30px;
-    width: 219px;/* example */
+    width: 335px;/* example */
 
 
 
@@ -255,4 +250,7 @@ visibility: hidden;
 }
 .hide{
     display:none;
+}
+.show{
+    display: inline;
 }
