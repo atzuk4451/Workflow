@@ -55,7 +55,7 @@
 
         position: { x: 20, y: 20 },
         size: { width: 105, height: 50 },
-        attrs: { rect: {magnet:true,
+        attrs: { rect: {
                         id: 'baserect',
                         rx: 5,
                         ry: 5  },
@@ -311,14 +311,16 @@ paper.on('cell:pointerclick', function(cellView) {  //node or link selection
                     }
                 });
                 selected = cellView.model;
-                selected.attr('rect/id', 'select')
+                selected.attr('rect/id', 'select');
+                selected.attr('rect/magnet', 'true');
             }else {
 
 
                 selected.attr('rect/id', 'baserect');
-
+                selected.removeAttr('rect/magnet');
                 selected = cellView.model;
-                selected.attr('rect/id', 'select')
+                selected.attr('rect/id', 'select');
+                selected.attr('rect/magnet', 'true');
             }
         }
     }
@@ -335,7 +337,8 @@ paper.on('cell:pointerclick', function(cellView) {  //node or link selection
             });
         }else {
             selected = cellView.model;
-            selected.attr('rect/id', 'select')
+            selected.attr('rect/id', 'select');
+            selected.attr('rect/magnet', 'true');
         }
         }
 
@@ -358,6 +361,7 @@ paper.on('blank:pointerclick', function() { //resets selected node or link by cl
             selected = null;
         }else {
             selected.attr('rect/id', 'baserect');
+            selected.removeAttr('rect/magnet');
             selected = null;
         }
     }
