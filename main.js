@@ -54,12 +54,12 @@
     r1 = new joint.shapes.basic.Rect({ //Creating basic node
 
         position: { x: 20, y: 20 },
-        size: { width: 105, height: 50 },
+        size: { width: 105, height: 45 },
         attrs: { rect: {
                         id: 'baserect',
                         rx: 5,
                         ry: 5  },
-                 text: {text: 'Parent' }}
+                 text: {text: 'Parent', rect:{fill:'green',width: 15, height: 20} }}
 
     });
     r2 = new joint.shapes.basic.DecoratedRect({ //Creating resize handler
@@ -152,7 +152,7 @@
             r3 = r1.clone(); // creating parent object clone
             r4 = r2.clone();//creating resize handler clone
             r3.position(event.clientX, event.clientY); //positioning parent object by mouse coords
-            r4.position(event.clientX + 88, event.clientY + 35);//positioning handler
+            r4.position(event.clientX + 88, event.clientY + 30);//positioning handler
             r3.embed(r4); //grouping parent and handler objects
             graph.addCells([r3,r4]); //adding parent and handler
 
@@ -182,7 +182,20 @@
     }
 
     setGrid(paper, 15,'#FFFFFF')
+   graph.on('change',function(){
+       Links = graph.getLinks();
+       Links.forEach(function(item){
+            str = item.getSourceElement();
+            trg = item.getTargetElement();
+           if(str == trg){
+               item.remove();
 
+           }
+
+       })
+
+
+   });
 
 }());
 
@@ -259,7 +272,7 @@ function addNodes(){ //adding new nodes to paper
                 r3 = r1.clone(); // creating parent object clone
                 r4 = r2.clone();//creating resize handler clone
                 r3.position(150 + i*150, 150); //positioning parent object by mouse coords
-                r4.position(150 + 88 + i*150, 150 + 35 );//positioning handler
+                r4.position(150 + 88 + i*150, 150 + 30 );//positioning handler
                 r3.embed(r4); //grouping parent and handler objects
                 r3.attr('text/text', nodearray[i])
                 graph.addCells([r3, r4]); //adding parent and handler
@@ -381,7 +394,7 @@ function editGuard() {
         bootbox.dialog({                         //bootbox.dialog with inner HTML list
             title: "Choose Guard sample",
             message: '<select id="Ultra" >' +
-            '<option >Delete Guard</option>' +
+
             '<option >Guard1</option>' +
             '<option >Guard2</option>' +
             '<option >Guard3</option>' +
@@ -431,7 +444,6 @@ function editAction() { //link Action editing function
         bootbox.dialog({                        //bootbox.dialog with inner HTML list
             title: "Choose Action sample",
             message: '<select id="Ultra" >' +
-            '<option >Delete Action</option>' +
             '<option >Action1</option>' +
             '<option >Action2</option>' +
             '<option >Action3</option>' +
@@ -487,4 +499,36 @@ function editText(){ //edit text inside node
           });
             }
     }
+}
+
+function deleteAction(){
+    if (selected.isLink()){
+
+        selected.label(0, {attrs: {text: {id: 'actiontext'}, rect: {id: 'actionrect'}}});
+        selected.label(2, {attrs: {text: {class: 'hide'}, rect: {class: 'hide'}}});
+
+    }else{
+
+        bootbox.alert('Select link first');
+    }
+
+
+
+
+}
+
+function deleteGuard(){
+    if (selected.isLink()){
+
+        selected.label(1, {attrs: {text: {id: 'guardtext'}, rect: {id: 'guardrect'}}});
+        selected.label(3, {attrs: {text: {class: 'hide'}, rect: {class: 'hide'}}});
+
+    }else{
+
+        bootbox.alert('Select link first');
+    }
+
+
+
+
 }

@@ -103,6 +103,7 @@
     border-style: groove;
     border-color: #B99059;
     color: white;
+    box-shadow: 1px 1px 1px grey;
 }
 #btnDeleteselectedNode{
     border-radius: 7px;
@@ -133,7 +134,26 @@
     color: white;
     box-shadow: 1px 1px 1px grey;
 }
+#btnDltAction{
+    border-radius: 7px;
+    background-color: #E96C0C;
+    border:1px;
+    border-style: groove;
+    border-color: #B99059;
+    color: white;
+    box-shadow: 1px 1px 1px grey;
 
+}
+#btnDltGuard{
+    border-radius: 7px;
+    background-color: #E96C0C;
+    border:1px;
+    border-style: groove;
+    border-color: #B99059;
+    color: white;
+    box-shadow: 1px 1px 1px grey;
+
+}
 #fileinput{
     border-radius: 7px;
     background-color: #E96C0C;
